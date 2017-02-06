@@ -31,6 +31,36 @@ namespace Ex06Threads01Scissors
 		{
 			if (hasCustomer)
 			{
+				while (hasCustomer)
+				{
+					if (Monitor.TryEnter(sharedScissors[0], Program.rand.Next(100,600)))
+					{
+						try
+						{
+							if (Monitor.TryEnter(sharedScissors[1], Program.rand.Next(100, 600)))
+							{
+								try
+								{
+									for (int i = 0; i < 10; i++)
+									{
+										Thread.Sleep(Program.rand.Next(100, 600));
+									}
+									hasCustomer = false;
+									Console.WriteLine("HairDresser " + ID + " done!");
+								}finally
+								{
+									Monitor.Exit(sharedScissors[1]);
+								}
+							}
+						}
+						finally
+						{
+							Monitor.Exit(sharedScissors[0]);
+						}
+					}
+					
+				}
+				/*
 				lock (sharedScissors[0])
 				{
 					lock (sharedScissors[1])
@@ -42,7 +72,7 @@ namespace Ex06Threads01Scissors
 						hasCustomer = false;
 						Console.WriteLine("HairDresser " + ID + " done!");
 					}
-				}
+				}*/
 			}
 		}
 	}
